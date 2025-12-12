@@ -1,0 +1,12 @@
+{
+  "name": "git-worktree",
+  "description": "Manage git worktrees with Claude Code - create, switch, and cleanup.",
+  "version": "1.0.0",
+  "author": {
+    "name": "himicoswilson"
+  },
+  "repository": "https://github.com/himicoswilson/himi-claude-plugins",
+  "homepage": "https://github.com/himicoswilson/himi-claude-plugins#readme",
+  "license": "MIT",
+  "keywords": ["git", "worktree", "workflow", "terminal"]
+}
