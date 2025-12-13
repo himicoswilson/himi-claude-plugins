@@ -80,3 +80,9 @@ Follow [Semantic Versioning](https://semver.org/):
 Update version in:
 - `git-worktree/.claude-plugin/plugin.json` - plugin version
 - `.claude-plugin/marketplace.json` - marketplace and plugin entry versions
+
+**Creating a release tag**:
+```bash
+git tag -a v1.x.x -m "Release v1.x.x"
+git push origin v1.x.x
+```

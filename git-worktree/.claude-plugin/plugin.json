@@ -1,7 +1,7 @@
 {
   "name": "git-worktree",
   "description": "Manage git worktrees with Claude Code - create, switch, and cleanup.",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "author": {
     "name": "himicoswilson"
   },
