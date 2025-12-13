@@ -7,10 +7,10 @@ A Claude Code plugin for git worktree management. Create worktrees, open them in
 ### `/wt-create`
 
 - Create worktrees from existing or new branches
-- Generate branch names from descriptions
+- Generate branch names from descriptions (auto-detected)
 - Support branch prefixes (`feature/`, `bugfix/`, `hotfix/`, `release/`)
 - Create from remote branches
-- Auto-open new Terminal.app with Claude Code
+- Auto-open new terminal with Claude Code
 
 ### `/wt-finish`
 
@@ -25,6 +25,17 @@ A Claude Code plugin for git worktree management. Create worktrees, open them in
 - Auto-creates worktrees and launches Claude sessions
 - Maximum 3 parallel tasks
 - Triggered by phrases like "in parallel", "at the same time"
+
+## Supported Terminals
+
+| Platform | Terminal | Status |
+|----------|----------|--------|
+| macOS | Terminal.app | ✅ Supported |
+| macOS | iTerm2 | ✅ Supported |
+| Linux | GNOME Terminal | ✅ Supported |
+| Linux | Kitty | ✅ Supported |
+| Linux | Konsole | ✅ Supported |
+| Other | Generic | ⚠️ Manual instructions |
 
 ## Installation
 
@@ -51,8 +62,11 @@ A Claude Code plugin for git worktree management. Create worktrees, open them in
 /wt-create -p feature -b login        # feature/login
 /wt-create -p bug -b fix-crash        # bugfix/fix-crash
 
-# From description (confirms first)
-/wt-create -d "add user authentication"
+# From description (auto-detected, confirms first)
+/wt-create "add user authentication"
+
+# With prefix from description
+/wt-create -p feat "add login page"   # feature/add-login-page
 
 # From remote branch
 /wt-create -r origin/develop
@@ -81,27 +95,26 @@ A Claude Code plugin for git worktree management. Create worktrees, open them in
 
 ### wt-create
 
-| Option        | Description                                                          |
-| ------------- | -------------------------------------------------------------------- |
-| `<branch>`    | Checkout existing branch                                             |
-| `-b <name>`   | Create new branch                                                    |
-| `-d <desc>`   | Generate branch from description                                     |
-| `-p <type>`   | Add prefix: `f`/`feature`, `b`/`bugfix`, `h`/`hotfix`, `r`/`release` |
-| `-r <branch>` | Create from remote branch                                            |
+| Option | Description |
+|--------|-------------|
+| `<branch>` | Checkout existing branch |
+| `"<description>"` | Generate branch from description (auto-detected) |
+| `-b <name>` | Create new branch with explicit name |
+| `-p <type>` | Add prefix: `f`/`feature`, `b`/`bugfix`, `h`/`hotfix`, `r`/`release` |
+| `-r <branch>` | Create from remote branch |
 
 ### wt-finish
 
-| Option       | Description                                    |
-| ------------ | ---------------------------------------------- |
-| (none)       | Merge -> cleanup -> close terminal             |
-| `--push`     | Push to remote after merge                     |
-| `--pr`       | Create PR instead of merge (requires `gh` CLI) |
-| `--no-merge` | Skip merge, only cleanup                       |
-| `--force`    | Force delete with uncommitted changes          |
+| Option | Description |
+|--------|-------------|
+| (none) | Merge -> cleanup -> close terminal |
+| `--push` | Push to remote after merge |
+| `--pr` | Create PR instead of merge (requires `gh` CLI) |
+| `--no-merge` | Skip merge, only cleanup |
+| `--force` | Force delete with uncommitted changes |
 
 ## Requirements
 
-- macOS with Terminal.app
 - Git
 - Claude Code
 - GitHub CLI (`gh`) for `--pr` option

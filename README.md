@@ -33,7 +33,12 @@ A plugin marketplace for Claude Code by himicoswilson.
     ├── scripts/            # Shell scripts
     │   ├── wt-create.sh
     │   ├── wt-finish.sh
-    │   └── wt-parallel.sh
+    │   ├── wt-parallel.sh
+    │   └── lib/            # Shared libraries
+    │       ├── common.sh
+    │       ├── terminal.sh
+    │       ├── detect-terminal.sh
+    │       └── adapters/   # Terminal adapters
     ├── skills/             # Agent skills
     │   └── parallel-tasks/
     │       └── SKILL.md

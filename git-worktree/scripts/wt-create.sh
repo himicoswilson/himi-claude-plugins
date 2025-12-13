@@ -12,45 +12,16 @@
 
 set -e
 
-# Colors for output
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-NC='\033[0m'
-
-error() { echo -e "${RED}Error:${NC} $1" >&2; exit 1; }
-info() { echo -e "${GREEN}Info:${NC} $1"; }
-warn() { echo -e "${YELLOW}Warning:${NC} $1"; }
-
-# Convert description to valid branch name
-description_to_branch() {
-    local desc="$1"
-    echo "$desc" | \
-        tr '[:upper:]' '[:lower:]' | \
-        sed 's/[^a-z0-9 -]//g' | \
-        sed 's/  */ /g' | \
-        sed 's/ /-/g' | \
-        sed 's/--*/-/g' | \
-        sed 's/^-//' | \
-        sed 's/-$//' | \
-        cut -c1-50
-}
-
-# Check if input looks like a description (contains space or special chars)
-is_description() {
-    local input="$1"
-    # Contains space, or starts with verb-like patterns
-    [[ "$input" == *" "* ]] && return 0
-    return 1
-}
+# Get script directory and source libraries
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "${SCRIPT_DIR}/lib/common.sh"
+source "${SCRIPT_DIR}/lib/terminal.sh"
 
 # Check if we're in a git repository
-if ! git rev-parse --is-inside-work-tree &>/dev/null; then
-    error "Not in a git repository"
-fi
+check_git_repo
 
 # Get repository root
-REPO_ROOT=$(git rev-parse --show-toplevel)
+REPO_ROOT=$(get_repo_root)
 
 # Parse arguments
 CREATE_BRANCH=false
@@ -206,24 +177,12 @@ echo "Worktree location: $WORKTREE_PATH"
 echo "Branch: $BRANCH"
 [[ "$FROM_REMOTE" == true ]] && echo "Tracking: $REMOTE_BRANCH"
 
-# Try to open new Terminal.app window and run claude
+# Open new terminal with Claude Code
 info "Opening new terminal with Claude Code..."
 
-if open -a Terminal "$WORKTREE_PATH" 2>/dev/null; then
-    sleep 1
-    if osascript -e "tell application \"Terminal\" to do script \"claude\" in front window" 2>/dev/null; then
-        info "Done! A new Terminal window should open with Claude Code in the worktree."
-    else
-        warn "Terminal opened but couldn't run claude automatically."
-        echo ""
-        echo "Run this command in the new terminal:"
-        echo "  claude"
-    fi
+if open_new_terminal "$WORKTREE_PATH" "claude"; then
+    info "Done! A new terminal window should open with Claude Code in the worktree."
 else
-    warn "Could not open Terminal.app (possibly running in sandbox mode)."
-    echo ""
-    echo "Run these commands manually in a new terminal:"
-    echo ""
-    echo "  cd '$WORKTREE_PATH' && claude"
-    echo ""
+    # open_new_terminal already printed instructions for manual action
+    :
 fi

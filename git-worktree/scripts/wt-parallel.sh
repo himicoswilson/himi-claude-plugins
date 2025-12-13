@@ -9,49 +9,16 @@
 
 set -e
 
-# Colors for output
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-CYAN='\033[0;36m'
-NC='\033[0m'
-
-error() { echo -e "${RED}Error:${NC} $1" >&2; }
-info() { echo -e "${GREEN}Info:${NC} $1"; }
-warn() { echo -e "${YELLOW}Warning:${NC} $1"; }
-task_info() { echo -e "${CYAN}Task $1:${NC} $2"; }
-
-# Convert description to valid branch name
-description_to_branch() {
-    local desc="$1"
-    echo "$desc" | \
-        tr '[:upper:]' '[:lower:]' | \
-        sed 's/[^a-z0-9 -]//g' | \
-        sed 's/  */ /g' | \
-        sed 's/ /-/g' | \
-        sed 's/--*/-/g' | \
-        sed 's/^-//' | \
-        sed 's/-$//' | \
-        cut -c1-50
-}
-
-# Escape prompt for shell and AppleScript
-escape_prompt() {
-    local prompt="$1"
-    # Escape backslashes, double quotes, and single quotes for shell
-    prompt="${prompt//\\/\\\\}"
-    prompt="${prompt//\"/\\\"}"
-    echo "$prompt"
-}
+# Get script directory and source libraries
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "${SCRIPT_DIR}/lib/common.sh"
+source "${SCRIPT_DIR}/lib/terminal.sh"
 
 # Check if we're in a git repository
-if ! git rev-parse --is-inside-work-tree &>/dev/null; then
-    error "Not in a git repository"
-    exit 1
-fi
+check_git_repo
 
 # Get repository root and name
-REPO_ROOT=$(git rev-parse --show-toplevel)
+REPO_ROOT=$(get_repo_root)
 REPO_NAME=$(basename "$REPO_ROOT")
 
 # Parse arguments
@@ -62,26 +29,25 @@ while [[ $# -gt 0 ]]; do
     case $1 in
         --branches)
             shift
-            [[ -z "$1" ]] && { error "Branches required after --branches"; exit 1; }
+            [[ -z "$1" ]] && error "Branches required after --branches"
             BRANCHES="$1"
             shift
             ;;
         --prompts)
             shift
-            [[ -z "$1" ]] && { error "Prompts required after --prompts"; exit 1; }
+            [[ -z "$1" ]] && error "Prompts required after --prompts"
             PROMPTS="$1"
             shift
             ;;
         *)
             error "Unknown argument: $1"
-            exit 1
             ;;
     esac
 done
 
 # Validate required arguments
-[[ -z "$BRANCHES" ]] && { error "--branches is required"; exit 1; }
-[[ -z "$PROMPTS" ]] && { error "--prompts is required"; exit 1; }
+[[ -z "$BRANCHES" ]] && error "--branches is required"
+[[ -z "$PROMPTS" ]] && error "--prompts is required"
 
 # Parse pipe-separated values into arrays
 IFS='|' read -ra BRANCH_ARRAY <<< "$BRANCHES"
@@ -90,19 +56,16 @@ IFS='|' read -ra PROMPT_ARRAY <<< "$PROMPTS"
 # Validate array lengths match
 if [[ ${#BRANCH_ARRAY[@]} -ne ${#PROMPT_ARRAY[@]} ]]; then
     error "Number of branches (${#BRANCH_ARRAY[@]}) must match number of prompts (${#PROMPT_ARRAY[@]})"
-    exit 1
 fi
 
 # Validate maximum 3 tasks
 TASK_COUNT=${#BRANCH_ARRAY[@]}
 if [[ $TASK_COUNT -gt 3 ]]; then
     error "Maximum 3 parallel tasks allowed, got $TASK_COUNT"
-    exit 1
 fi
 
 if [[ $TASK_COUNT -lt 1 ]]; then
     error "At least one task is required"
-    exit 1
 fi
 
 info "Creating $TASK_COUNT parallel worktrees..."
@@ -126,42 +89,35 @@ for i in "${!BRANCH_ARRAY[@]}"; do
 
     # Check if path already exists
     if [[ -e "$WORKTREE_PATH" ]]; then
-        error "  Path already exists: $WORKTREE_PATH"
+        echo -e "${RED}Error:${NC}   Path already exists: $WORKTREE_PATH" >&2
         FAILED+=("$BRANCH (path exists)")
         continue
     fi
 
     # Check if branch already exists
     if git rev-parse --verify "$BRANCH" &>/dev/null; then
-        error "  Branch already exists: $BRANCH"
+        echo -e "${RED}Error:${NC}   Branch already exists: $BRANCH" >&2
         FAILED+=("$BRANCH (branch exists)")
         continue
     fi
 
     # Create the worktree
     if ! git worktree add -b "$BRANCH" "$WORKTREE_PATH" 2>&1; then
-        error "  Failed to create worktree for $BRANCH"
+        echo -e "${RED}Error:${NC}   Failed to create worktree for $BRANCH" >&2
         FAILED+=("$BRANCH (worktree creation failed)")
         continue
     fi
 
     info "  Worktree created at: $WORKTREE_PATH"
 
-    # Escape prompt for AppleScript
-    ESCAPED_PROMPT=$(escape_prompt "$PROMPT")
+    # Open new terminal with claude and prompt
+    ESCAPED_PROMPT=$(escape_for_shell "$PROMPT")
 
-    # Open new Terminal window and run claude with prompt
-    if osascript <<EOF 2>/dev/null
-tell application "Terminal"
-    do script "cd '$WORKTREE_PATH' && claude \"$ESCAPED_PROMPT\""
-    activate
-end tell
-EOF
-    then
+    if open_new_terminal "$WORKTREE_PATH" "claude \"$ESCAPED_PROMPT\""; then
         info "  Terminal launched with Claude session"
         SUCCEEDED+=("$BRANCH")
     else
-        warn "  Worktree created but couldn't launch Terminal automatically"
+        warn "  Worktree created but couldn't launch terminal automatically"
         echo "    Run manually: cd '$WORKTREE_PATH' && claude \"$ESCAPED_PROMPT\""
         SUCCEEDED+=("$BRANCH (manual launch needed)")
     fi
