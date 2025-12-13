@@ -1,0 +1,27 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git commit:*)",
+      "Bash(cat:*)",
+      "Bash(tree:*)",
+      "WebSearch",
+      "WebFetch(domain:leehanchung.github.io)",
+      "WebFetch(domain:simonwillison.net)",
+      "WebFetch(domain:alexop.dev)",
+      "WebFetch(domain:blog.fsck.com)",
+      "WebFetch(domain:mikhail.io)",
+      "Bash(chmod:*)",
+      "Bash(bash -n:*)",
+      "Bash(ln:*)",
+      "Bash(git add:*)"
+    ]
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "memory"
+  ],
+  "sandbox": {
+    "enabled": false,
+    "autoAllowBashIfSandboxed": false
+  }
+}

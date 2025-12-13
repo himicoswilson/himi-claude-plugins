@@ -19,6 +19,13 @@ A Claude Code plugin for git worktree management. Create worktrees, open them in
 - Auto-push to remote
 - Auto-close terminal after completion
 
+### Parallel Tasks (Skill)
+
+- Work on multiple tasks simultaneously
+- Auto-creates worktrees and launches Claude sessions
+- Maximum 3 parallel tasks
+- Triggered by phrases like "in parallel", "at the same time"
+
 ## Installation
 
 ```bash

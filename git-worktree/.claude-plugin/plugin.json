@@ -8,5 +8,5 @@
   "repository": "https://github.com/himicoswilson/himi-claude-plugins",
   "homepage": "https://github.com/himicoswilson/himi-claude-plugins#readme",
   "license": "MIT",
-  "keywords": ["git", "worktree", "workflow", "terminal"]
+  "keywords": ["git", "worktree", "workflow", "terminal", "parallel"]
 }

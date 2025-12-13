@@ -5,10 +5,10 @@
 # Usage:
 #   wt-create.sh <branch>                         - Checkout existing branch
 #   wt-create.sh -b <new-branch>                  - Create new branch
-#   wt-create.sh -d "<description>"               - Create branch from description
+#   wt-create.sh "<description>"                  - Create branch from description (auto-detected)
 #   wt-create.sh -p <prefix> -b <name>            - Create with prefix (feature/bugfix/hotfix)
+#   wt-create.sh -p <prefix> "<description>"      - Create with prefix from description
 #   wt-create.sh -r <remote-branch>               - Create from remote branch
-#   wt-create.sh <branch> <path>                  - Custom path
 
 set -e
 
@@ -34,6 +34,14 @@ description_to_branch() {
         sed 's/^-//' | \
         sed 's/-$//' | \
         cut -c1-50
+}
+
+# Check if input looks like a description (contains space or special chars)
+is_description() {
+    local input="$1"
+    # Contains space, or starts with verb-like patterns
+    [[ "$input" == *" "* ]] && return 0
+    return 1
 }
 
 # Check if we're in a git repository
@@ -63,6 +71,8 @@ while [[ $# -gt 0 ]]; do
             shift
             ;;
         -d|--desc)
+            # Backward compatibility: explicit -d flag
+            warn "-d flag is deprecated. Pass description directly: wt-create.sh \"your description\""
             CREATE_BRANCH=true
             FROM_DESCRIPTION=true
             shift
@@ -93,7 +103,16 @@ while [[ $# -gt 0 ]]; do
             ;;
         *)
             if [[ -z "$BRANCH" ]]; then
-                BRANCH="$1"
+                # Auto-detect description: if input contains spaces, treat as description
+                if is_description "$1"; then
+                    CREATE_BRANCH=true
+                    FROM_DESCRIPTION=true
+                    BRANCH=$(description_to_branch "$1")
+                    [[ -z "$BRANCH" ]] && error "Could not generate valid branch name from description"
+                    info "Generated branch name: $BRANCH"
+                else
+                    BRANCH="$1"
+                fi
             elif [[ -z "$WORKTREE_PATH" ]]; then
                 WORKTREE_PATH="$1"
             else

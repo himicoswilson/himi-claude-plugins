@@ -32,7 +32,11 @@ A plugin marketplace for Claude Code by himicoswilson.
     │   └── wt-finish.md
     ├── scripts/            # Shell scripts
     │   ├── wt-create.sh
-    │   └── wt-finish.sh
+    │   ├── wt-finish.sh
+    │   └── wt-parallel.sh
+    ├── skills/             # Agent skills
+    │   └── parallel-tasks/
+    │       └── SKILL.md
     ├── LICENSE
     └── README.md
 ```
