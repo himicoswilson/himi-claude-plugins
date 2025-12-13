@@ -6,14 +6,14 @@
   },
   "metadata": {
     "description": "Claude Code plugins by himicoswilson",
-    "version": "1.0.0"
+    "version": "1.1.0"
   },
   "plugins": [
     {
       "name": "git-worktree",
       "source": "./git-worktree",
       "description": "Manage git worktrees with Claude Code - create, switch, and cleanup",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "category": "git",
       "tags": ["git", "worktree", "workflow"]
     }
