@@ -1,0 +1,12 @@
+{
+  "name": "test-doc-generator",
+  "description": "自主学习型测试文档生成器 - 从需求文档生成测试计划、测试用例、测试报告",
+  "version": "1.0.0",
+  "author": {
+    "name": "himicoswilson"
+  },
+  "repository": "https://github.com/himicoswilson/himi-claude-plugins",
+  "homepage": "https://github.com/himicoswilson/himi-claude-plugins#readme",
+  "license": "MIT",
+  "keywords": ["test", "documentation", "QA", "测试文档", "测试用例", "测试计划", "测试报告"]
+}

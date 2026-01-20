@@ -16,6 +16,14 @@
       "version": "1.2.0",
       "category": "git",
       "tags": ["git", "worktree", "workflow", "parallel"]
+    },
+    {
+      "name": "test-doc-generator",
+      "source": "./test-doc-generator",
+      "description": "自主学习型测试文档生成器 - 从需求文档生成测试计划、测试用例、测试报告",
+      "version": "1.0.0",
+      "category": "documentation",
+      "tags": ["test", "documentation", "QA", "excel", "测试文档"]
     }
   ]
 }
