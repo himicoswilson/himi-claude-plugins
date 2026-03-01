@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "Claude Code plugins by himicoswilson",
-    "version": "1.2.0"
+    "version": "1.3.0"
   },
   "plugins": [
     {
@@ -24,6 +24,14 @@
       "version": "1.0.0",
       "category": "documentation",
       "tags": ["test", "documentation", "QA", "excel", "测试文档"]
+    },
+    {
+      "name": "frontend-craft",
+      "source": "./frontend-craft",
+      "description": "Turn design prototypes into maintainable frontend components through structured analysis and incremental generation",
+      "version": "1.0.0",
+      "category": "frontend",
+      "tags": ["frontend", "design", "components", "ui", "prototype", "code-generation"]
     }
   ]
 }

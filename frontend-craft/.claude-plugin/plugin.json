@@ -1,0 +1,12 @@
+{
+  "name": "frontend-craft",
+  "description": "Turn design prototypes into maintainable frontend components through structured analysis and incremental generation.",
+  "version": "1.0.0",
+  "author": {
+    "name": "himicoswilson"
+  },
+  "repository": "https://github.com/himicoswilson/himi-claude-plugins",
+  "homepage": "https://github.com/himicoswilson/himi-claude-plugins#readme",
+  "license": "MIT",
+  "keywords": ["frontend", "design", "components", "ui", "prototype", "code-generation"]
+}
